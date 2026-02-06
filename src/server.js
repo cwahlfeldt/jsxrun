@@ -46,6 +46,66 @@ function htmlShell(title) {
 </html>`;
 }
 
+export async function buildHTML({ entry, out }) {
+  const entryDir = dirname(entry);
+  const title = entry.split("/").pop().replace(/\.(jsx|tsx)$/i, "");
+  const outFile = out || resolve(process.cwd(), title + ".html");
+
+  const result = await build({
+    stdin: {
+      contents: `
+import { createElement } from "react";
+import { createRoot } from "react-dom/client";
+import Mod from ${JSON.stringify(entry)};
+
+const root = createRoot(document.getElementById("root"));
+const App = Mod && Mod.default ? Mod.default : Mod;
+root.render(createElement(App));
+`,
+      resolveDir: entryDir,
+      loader: entry.endsWith(".tsx") ? "tsx" : "jsx",
+    },
+    bundle: true,
+    format: "esm",
+    jsx: "automatic",
+    write: false,
+    external: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
+  });
+
+  const js = result.outputFiles[0].text;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@19",
+      "react-dom": "https://esm.sh/react-dom@19",
+      "react-dom/client": "https://esm.sh/react-dom@19/client",
+      "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">${js}</script>
+</body>
+</html>`;
+
+  const { writeFileSync, mkdirSync } = await import("node:fs");
+  mkdirSync(dirname(outFile), { recursive: true });
+  writeFileSync(outFile, html);
+  console.log(`\n  Built: ${outFile}\n`);
+}
+
 export async function startServer({ entry, port, open }) {
   const entryDir = dirname(entry);
   const title = entry.split("/").pop().replace(/\.(jsx|tsx)$/i, "");
