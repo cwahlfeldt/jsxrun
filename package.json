@@ -4,7 +4,7 @@
   "description": "Run a single JSX file as a React app — no setup required",
   "type": "module",
   "bin": {
-    "jsxrun": "./bin/jsxr.js"
+    "jsxrun": "bin/jsxr.js"
   },
   "files": [
     "bin/",
