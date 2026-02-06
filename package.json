@@ -1,0 +1,27 @@
+{
+  "name": "jsxrun",
+  "version": "0.1.0",
+  "description": "Run a single JSX file as a React app — no setup required",
+  "type": "module",
+  "bin": {
+    "jsxrun": "./bin/jsxr.js"
+  },
+  "files": [
+    "bin/",
+    "src/"
+  ],
+  "scripts": {
+    "start": "node bin/jsxr.js"
+  },
+  "keywords": [
+    "jsx",
+    "react",
+    "dev-server",
+    "cli",
+    "prototyping"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
