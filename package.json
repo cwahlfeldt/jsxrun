@@ -1,6 +1,6 @@
 {
   "name": "jsxrun",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Run a single JSX file as a React app — no setup required",
   "type": "module",
   "bin": {
